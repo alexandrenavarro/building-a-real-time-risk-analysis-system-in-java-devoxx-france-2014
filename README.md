@@ -14,7 +14,9 @@ Notre application de Trading d'Analyse de Risque temps réel doit maintenir une 
 
 2) (Alexandre) Indicqteurs de volumetries (nb message, taille message, nb de deal, nb d instrument, nb users)
 
-3) Stack technologique (Tibco?, Java + UI en C#, ActivePivot, JProfiler, MAT)
+3 ) Fonctionnalites business avancees: Grouping de deal, rebucketing, indicateur calculés temps reel PnL = sensi * (closing - last)
+
+3) Stack technologique (Tibco?, Java + UI en C#, ActivePivot, JProfiler, MAT, Spring, guava, disruptor)
 
 4) (Benoit) ActivePivot: Aggregation et requete temps reel
 
