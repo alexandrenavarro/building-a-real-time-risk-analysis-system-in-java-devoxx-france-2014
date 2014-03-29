@@ -7,11 +7,12 @@ Notre application de Trading d'Analyse de Risque temps réel doit maintenir une 
 ## Presentation du métier, et objectifs du projet 
 (Alexandre)
 Problematique de l international, Traders.
+Comment etait implementé un tel projet auparavant? Quelles technos? Quelles difficultés? Limitations? (Typiquement pas temps reel, et moins de trade intraday). Comment va evoluer le projet dans le futur ? (Accroissement du nombre de trade, et de leur variété (Cross Assets))
  
 ## Fonctionnalites business avancees : 
 (Alexandre)
-- Grouping de deal
-- Rebucketing
+- Grouping de deal, parametrable par utilisateur
+- Rebucketing, parametrable par utilisateur
 - Indicateur calculés temps reel PnL = sensi * (closing - last)
 
 ## Architecture global :
@@ -39,10 +40,17 @@ Plusieurs type de cube, faulttolerance, pas de pricing.
 
 ## ActivePivot: Aggregation et requete temps reel
 (Benoit)
-- Analogie F1
+- Composant Technologique In Memory: enabled by new Hardware and new technos (Java GCs)
+- Analogie F1: Si la technologie est tres puissante, elle reste difficile a mettre en oeuvre. OLAP apporte son lot de difficulte car tres naturel pour sujet simple, mais complexe pour les sujet avancee. La maturite acquises le long des projets ammene a trouver des solutions simples meme pour les sujets avancees... mais il est difficile de trouver ces solutions simples.
 - Threading, long pooling, immutabilité dans activepivot / threading (1 requete , n thread)
-//TODO
-
+- S'appuie sur la ForkJoinPool: backporté depuis JDK7 dans JDK6, QuartetFS est un des gros contributeurs a la JSR-166. Beaucoup de retour, bug-spotting et fixing, optimisation pour machine jusque 64 coeurs, 
+- Optimisation pour machine avec jusque plusieurs TB de data (tests actuellement sur machine Bull 4TeraByte)
+### Optim memoire
+- Optimisation pour architecture NUMA
+- Direct Memory pour diminuer la taille du heap
+- Sharding (deploiement avec 6*1TB), architecture hsared nothing
+- Explication du moteur temps reeel. pas de maintiens de vues temps reel. Calcul de l impact d une transaction au vues des questions posees.
+ 
 ## Performance : 
 (Benoit)
 SLA (del), optimisations (tout est en asynchrone). Usage d un framework specifique? Non. (Queue type Disruptor, ExecutorService,)
@@ -50,6 +58,10 @@ SLA (del), optimisations (tout est en asynchrone). Usage d un framework specifiq
 - pool d'objets pour les parties flux temps avec sérialization delta, attention a l'allocation d'objet
 - sampling dynamique pour le flux, insertion dans le cube.
 - JVM: options, temps de GC (exemple du gars qui dit que l on est lent, pile au moment ou on a GC) (e.g. le mec qui a groupé en moins d une seconde). tuning Old / Young, Azul.
+
+### Resolution des problemes:
+- JProfiler
+- MAT memory heap dump amaysis (over heaps up to 150GB, takes 1 or 2 hours)
 
 ## Best practises / Design : 
 (Alexandre/Benoit)
@@ -67,3 +79,7 @@ SLA (del), optimisations (tout est en asynchrone). Usage d un framework specifiq
 - Deploiement automatique (deployit).
 - Meilleur monitoring avec logstash/elasticsearch/kibana
 - Refactoring package / livrable plus orienté feature pour avoir des cubes type genre Rates, Credit, ForexOption, XAsset ...
+
+
+Rythme des release?
+Criticite de la production?
