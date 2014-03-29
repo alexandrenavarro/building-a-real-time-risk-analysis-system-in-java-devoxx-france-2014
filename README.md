@@ -12,7 +12,8 @@ Anaylsis Services, cube avec notification tibcorv.
 Problèmatique, inutilisable à l'internation (Paris centrique), pas de, performance non (retard de quelques secondes à plusieurs minutes).
 Comment va evoluer le projet dans le futur ? (Accroissement du nombre de trade, et de leur variété (Cross Assets))
 1M de faits dans le cube au début, aujourd'hui, 50M-100M de faits dans le cube alimenté par plusieurs système.
- 
+Criticité de la production.
+
 ## Fonctionnalites business avancees : 
 (Alexandre)
 - Indicateur préagrégé en temps tel que la sensi, position ou bookvalue envoyé par des calculateurs de risque
@@ -26,6 +27,7 @@ Comment va evoluer le projet dans le futur ? (Accroissement du nombre de trade, 
 GREAT (Global Risk Exposure Analysis Tool) Server est avec un cube en mémoire temps réel qui contient les risques.
 2 servers (main, DR) avec les mêmes données à NY, Paris, HK
 Pas de proxy type Apache, NGinx ou HAProxy, client qui décident suivant.
+
 Recoit des risques depuis un calculateur, souscrit au last Price et closing.
 Plusieurs type de cube (Rates, XAsset, ... ), pas de pricing, que de l'estimation / approximation.
 
@@ -75,9 +77,9 @@ SLA (del), optimisations (tout est en asynchrone). Usage d un framework specifiq
 - Isolation (mode dégradé pour chacun des systemes sources), chargement de fichier, reload à chaud (JMX, fichier), Couplage faible message entre application avec serialization key/value (sans schema fort type corba), pas de livraison simultané.
 - Configuration du projet: javaConfig a eu un fort impact (si xml, dans votre lib application.xml, web.xml, avec des référence à des classes, ce n'est pas correct)
 - Monotoring REST jenkins health check, metrics
-- Beta en UAT avec flux de prod puis DR pour les bétas Users.
+- Beta en UAT avec flux de prod puis DR pour les bétas Users, release toutes le 3 semaines environ.
 - Package par feature pas technique, nombre de pom.xml, 1 par livrable ou lib avec cycle de vie différent.
-- Maven (javaformat, appassembler, assembly, release, )
+- Maven (javaformat, appassembler, assembly, release, site,)
 - Tester/Tester/Tester (65/70 % de coverage).
 
 ## Future améliorations techniques dans les prochains mois
@@ -85,8 +87,7 @@ SLA (del), optimisations (tout est en asynchrone). Usage d un framework specifiq
 - Tomcat 8 embedded, jdk 1.8, Migration ActivePivot 5.0
 - Deploiement automatique (deployit).
 - Meilleur monitoring avec logstash/elasticsearch/kibana
-- Refactoring package / livrable plus orienté feature pour avoir des cubes type genre Rates, Credit, ForexOption, XAsset ...
+- Refactoring package / livrable plus orienté feature pour avoir des cubes type genre Rates, XAsset, Credit, ForexOption ...
 
 
-Rythme des release?
-Criticite de la production?
+Criticite de la production? Si les 2 serveurs sont down, il ne peuvent pas très traités mais pas seulement, il ne peuvent pas voir l'impact des évalotuions sur leurs positions actuelles. 
