@@ -66,11 +66,12 @@ SLA (del), optimisations (tout est en asynchrone). Usage d un framework specifiq
 - asynchronisement
 - pool d'objets pour les parties flux temps avec sérialization delta, attention a l'allocation d'objet
 - sampling dynamique pour le flux, insertion dans le cube.
-- JVM: options, temps de GC (exemple du gars qui dit que l on est lent, pile au moment ou on a GC) (e.g. le mec qui a groupé en moins d une seconde). tuning Old / Young, Azul.
+- JVM: options, temps de GC (exemple du gars qui dit que l on est lent, pile au moment ou on a GC) (e.g. le mec qui a groupé en moins d une seconde). tuning Old / Young, Azul., gc logs.
 
 ### Resolution des problemes:
 - JProfiler
 - MAT memory heap dump amaysis (over heaps up to 150GB, takes 1 or 2 hours)
+- Thread Dump en prod.
 
 ## Best practises / Design : 
 (Alexandre/Benoit)
@@ -80,7 +81,9 @@ SLA (del), optimisations (tout est en asynchrone). Usage d un framework specifiq
 - Beta en UAT avec flux de prod puis DR pour les bétas Users, release toutes le 3 semaines environ.
 - Package par feature pas technique, nombre de pom.xml, 1 par livrable ou lib avec cycle de vie différent.
 - Maven (javaformat, appassembler, assembly, release, site,)
+- Interface / Impl simplifie le test dans et permet pas forcément de changement d'implementation (ex : cache HashMap / RelionalStore, lib temps réel Abstraction Subscriber entre flux floor, ).
 - Tester/Tester/Tester (65/70 % de coverage).
+- Savoir dire non sur certains choix si vous pensez que cela peut avoir des conséquences négatifs (analogie MST).
 
 ## Future améliorations techniques dans les prochains mois
 (Alexandre)
