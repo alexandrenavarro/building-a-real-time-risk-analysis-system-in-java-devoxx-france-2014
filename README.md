@@ -1,4 +1,4 @@
-# building-a-real-time-risk-analysis-system-in-java-devoxx-france-2014
+# Building a real time risk analysis system in java devoxx france 2014
 
 building-a-real-time-risk-analysis-system-in-java-devoxx-france-2014
  	
@@ -12,7 +12,8 @@ Notre application de Trading d'Analyse de Risque temps réel doit maintenir une 
 
 ## Architecture global :
 (Alexandre)
-2 servers avec les mêmes données, internatial, plusieurs type de cube, faulttolerance, 
+GREAT (Global Risk Exposure Analysis Tool) Server.
+2 servers avec les mêmes données, internatial, plusieurs type de cube, faulttolerance, pas de pricing
 
 ## Stack technologique (Tibco?, Java + UI en C#, ActivePivot, JProfiler, MAT, Spring, guava, disruptor)
 (Alexandre)
@@ -26,8 +27,9 @@ Notre application de Trading d'Analyse de Risque temps réel doit maintenir une 
 ### Client
 - UI dans excel ou GUI lourde C# via WS/Soap longpolling / ou REST.
 
-## Indicateurs de volumetries (nb message, taille message, nb de deal, nb d instrument, nb users)
+## Indicateurs de volumetries 
 (Alexandre) 
+(nb message, taille message, nb de deal, nb d instrument, nb users)
 
 ## ActivePivot: Aggregation et requete temps reel (Benoit)
 - Analogie F1
@@ -39,18 +41,20 @@ SLA (del), optimisations (tout est en asynchrone). Usage d un framework specifiq
 - asynchronisement
 - pool d'objets pour les parties flux temps avec delta.
 - sampling dynamique 
-JVM: options, temps de GC (exemple du gars qui dit que l on est lent, pile au moment ou on a GC) (e.g. le mec qui a groupé en moins d une seconde).
+JVM: options, temps de GC (exemple du gars qui dit que l on est lent, pile au moment ou on a GC) (e.g. le mec qui a groupé en moins d une seconde). tuning Old / Young.
 
-## Design / Good practises: (Alexandre)
+## Best practises / Design : (Alexandre)
 - Isolation (mode dégradé pour chacun des systemes sources), chargement de fichier, reload à chaud.
-- Configuration du projet: javaConfig a eu un fort impact
+- Configuration du projet: javaConfig a eu un fort impact (si xml, dans votre lib application.xml, web.xml, avec des référence à des classes, ce n'est pas correct)
 - Monotoring REST jenkins health check, metrics
-- beta en UAT avec flux de prod.
+- Beta en UAT avec flux de prod puis DR pour les bétas Users.
+- Package par feature pas technique, nombre de pom.xml, 1 par livrable ou lib avec cycle de vie différent.
+- Tester/Tester/Tester (65/70 % de coverage).
 
 ## Future améliorations techniques dans les prochains mois
 (Alexandre)
 - Tomcat 8 embedded, jdk 1.8.
 - Migration ActivePivot 5.0
 - Deploiement automatique (deployit).
-- Plus orienté feature car type cube.
 - Meilleur monitoring avec logstash/elasticsearch/kibana
+- Refactoring plus orienté feature pour avoir des cubes type.
