@@ -5,13 +5,13 @@ building-a-real-time-risk-analysis-system-in-java-devoxx-france-2014
 Notre application de Trading d'Analyse de Risque temps réel doit maintenir une base de 100 millions de lignes (Xmx=64G) avec du flux de 5000 message/sec. Nos utilisateurs (répartis à Paris, Londres, NY et HK) suivent plus de 100 indicateurs tels que la sensibilité au marché et les estimations de gains : ils sont agrégés en temps réel avec des règles métiers complexes. Nous vous proposons un retour d’expérience afin d'expliquer nos choix technologiques : le design de l'application, la librairie ActivePivot pour agréger des indicateurs en temps réel et la diffusion des impacts en temps-réel.
 
 ## Presentation du métier, et objectifs du projet 
-Problematique de l international, Trading.
+Problematique de l international, Traders.
 (Alexandre)
  
 ## Fonctionnalites business avancees : 
-* Grouping de deal
-* Rebucketing
-* Indicateur calculés temps reel PnL = sensi * (closing - last)
+- Grouping de deal
+- Rebucketing
+- Indicateur calculés temps reel PnL = sensi * (closing - last)
 (Alexandre)
 
 ## Architecture global :
@@ -37,21 +37,24 @@ Plusieurs type de cube, faulttolerance, pas de pricing.
 (Alexandre) 
 (nb message, taille message, nb de deal, nb d instrument, nb users)
 
-## ActivePivot: Aggregation et requete temps reel (Benoit)
-- Analogie F1
+## ActivePivot: Aggregation et requete temps reel
 (Benoit)
-
+- Analogie F1
+- Threading, long pooling
+//TODO
 
 ## Performance : 
-(benoit) 
+(Benoit) 
 SLA (del), optimisations (tout est en asynchrone). Usage d un framework specifique? Non
 - asynchronisement
-- pool d'objets pour les parties flux temps avec delta.
-- sampling dynamique 
-JVM: options, temps de GC (exemple du gars qui dit que l on est lent, pile au moment ou on a GC) (e.g. le mec qui a groupé en moins d une seconde). tuning Old / Young.
+- pool d'objets pour les parties flux temps avec sérialization delta.
+- sampling dynamique pour le flux, insertion dans le cube.
+- JVM: options, temps de GC (exemple du gars qui dit que l on est lent, pile au moment ou on a GC) (e.g. le mec qui a groupé en moins d une seconde). tuning Old / Young, Azul.
 
-## Best practises / Design : (Alexandre)
-- Isolation (mode dégradé pour chacun des systemes sources), chargement de fichier, reload à chaud.
+## Best practises / Design : 
+(Alexandre)
+- Isolation (mode dégradé pour chacun des systemes sources), chargement de fichier, reload à chaud, Couplage faible message entre application avec serialization key/value (sans schema fort type corba).
+
 - Configuration du projet: javaConfig a eu un fort impact (si xml, dans votre lib application.xml, web.xml, avec des référence à des classes, ce n'est pas correct)
 - Monotoring REST jenkins health check, metrics
 - Beta en UAT avec flux de prod puis DR pour les bétas Users.
