@@ -6,37 +6,44 @@ Notre application de Trading d'Analyse de Risque temps réel doit maintenir une 
 
 ## Presentation du métier, et objectifs du projet 
 (Alexandre)
-Problematique de l international, Traders.
-Comment etait implementé un tel projet auparavant? Quelles technos? Quelles difficultés? Limitations? (Typiquement pas temps reel, et moins de trade intraday). Comment va evoluer le projet dans le futur ? (Accroissement du nombre de trade, et de leur variété (Cross Assets))
+Comment etait implementé un tel projet auparavant? 
+Quelles technos? Quelles difficultés? Limitations? (Typiquement pas temps reel, et moins de trade intraday). 
+Anaylsis Services, cube avec notification tibcorv.
+Problèmatique, inutilisable à l'internation (Paris centrique), pas de, performance non (retard de quelques secondes à plusieurs minutes).
+Comment va evoluer le projet dans le futur ? (Accroissement du nombre de trade, et de leur variété (Cross Assets))
+1M de faits dans le cube au début, aujourd'hui, 50M-100M de faits dans le cube alimenté par plusieurs système.
  
 ## Fonctionnalites business avancees : 
 (Alexandre)
-- Grouping de deal, parametrable par utilisateur
-- Rebucketing, parametrable par utilisateur
-- Indicateur calculés temps reel PnL = sensi * (closing - last)
+- Indicateur préagrégé en temps tel que la sensi, position ou bookvalue envoyé par des calculateurs de risque
+- Indicateur calculés temps reel PnL = sensi * (closing - last) pour avoir des estimations temps.
+- Bucketing par Maturité, parametrable par utilisateur
+- Grouping de deal, parametrable par utilisateur (seul partie en écriture, sinon tout en lecture)
+- Limite / StressTest (en cours de dev).
 
 ## Architecture global :
 (Alexandre)
-GREAT (Global Risk Exposure Analysis Tool) Server.
+GREAT (Global Risk Exposure Analysis Tool) Server est avec un cube en mémoire temps réel qui contient les risques.
 2 servers (main, DR) avec les mêmes données à NY, Paris, HK
-Pas de proxy, client qui décident suivant.
-Plusieurs type de cube, faulttolerance, pas de pricing.
+Pas de proxy type Apache, NGinx ou HAProxy, client qui décident suivant.
+Recoit des risques depuis un calculateur, souscrit au last Price et closing.
+Plusieurs type de cube (Rates, XAsset, ... ), pas de pricing, que de l'estimation / approximation.
 
 ## Stack technologique
 (Alexandre)
 ### Server
 - Webapp dans un Tomcat 7, jdk 7
 - Classique (Spring/JavaConfig, CXF/WS avec Rest/Soap, JMS (tibco-ems), Guava)
-- Moins classique (Disruptor, java.util.concurrent, reuters, flux direct des bourses, serialisation custom protobuf ou autre)
+- Moins classique (Disruptor, java.util.concurrent, reuters, flux direct des bourses, serialisation custom interne ou  protobuf)
 - Test : junit, mockito, assertj, wiremock.
-- Outillage : JProfiler, MAT, maven / jenkins / sonar,
+- Outillage : maven / jenkins / sonar et JProfiler, MAT.
 
 ### Client
 - UI dans excel ou GUI lourde C# via WS/Soap longpolling / ou REST.
 
 ## Indicateurs de volumetries 
 (Alexandre) 
-(nb faits, nb message de risk, nb msg flux, taille message, nb de deal, nb d instrument, nb users)
+(nb faits 50/100 M pour 2 jours, nb message de risk /jour (todo), nb msg flux 3-5k/msg, taille message (todo), nb de deal = 50k, nb d instrument 10k, nb de soucription , nb users 100 paris, 20 NY / 20 HK, machine 24 core avec 256Go de ram utilisé de l'ordre de 50% en Cpu et mémoire mis -Xmx64g)
 
 ## ActivePivot: Aggregation et requete temps reel
 (Benoit)
