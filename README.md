@@ -5,7 +5,7 @@ building-a-real-time-risk-analysis-system-in-java-devoxx-france-2014
 Notre application de Trading d'Analyse de Risque temps réel doit maintenir une base de 100 millions de lignes (Xmx=64G) avec du flux de 5000 message/sec. Nos utilisateurs (répartis à Paris, Londres, NY et HK) suivent plus de 100 indicateurs tels que la sensibilité au marché et les estimations de gains : ils sont agrégés en temps réel avec des règles métiers complexes. Nous vous proposons un retour d’expérience afin d'expliquer nos choix technologiques : le design de l'application, la librairie ActivePivot pour agréger des indicateurs en temps réel et la diffusion des impacts en temps-réel.
 
 ## Presentation du métier, et objectifs du projet 
-(Alexandre)
+(Alexandre) 3 min
 Comment etait implementé un tel projet auparavant? 
 Quelles technos? Quelles difficultés? Limitations? (Typiquement pas temps reel, et moins de trade intraday). 
 Anaylsis Services, cube avec notification tibcorv.
@@ -15,7 +15,7 @@ Comment va evoluer le projet dans le futur ? (Accroissement du nombre de trade, 
 Criticité de la production.
 
 ## Fonctionnalites business avancees : 
-(Alexandre)
+(Alexandre) 3 min
 - Indicateur préagrégé en temps tel que la sensi, position ou bookvalue envoyé par des calculateurs de risque
 - Indicateur calculés temps reel PnL = sensi * (closing - last) pour avoir des estimations temps.
 - Bucketing par Maturité, parametrable par utilisateur
@@ -23,7 +23,7 @@ Criticité de la production.
 - Limite / StressTest (en cours de dev).
 
 ## Architecture global :
-(Alexandre)
+(Alexandre) 3 min
 GREAT (Global Risk Exposure Analysis Tool) Server est avec un cube en mémoire temps réel qui contient les risques.
 2 servers (main, DR) avec les mêmes données à NY, Paris, HK
 Pas de proxy type Apache, NGinx ou HAProxy, client qui décident suivant.
@@ -32,7 +32,7 @@ Recoit des risques depuis un calculateur, souscrit au last Price et closing.
 Plusieurs type de cube (Rates, XAsset, ... ), pas de pricing, que de l'estimation / approximation.
 
 ## Stack technologique
-(Alexandre)
+(Alexandre) 5 min
 ### Server
 - Webapp dans un Tomcat 7, jdk 7
 - Classique (Spring/JavaConfig, CXF/WS avec Rest/Soap, JMS (tibco-ems), Guava)
@@ -44,11 +44,11 @@ Plusieurs type de cube (Rates, XAsset, ... ), pas de pricing, que de l'estimatio
 - UI dans excel ou GUI lourde C# via WS/Soap longpolling / ou REST.
 
 ## Indicateurs de volumetries 
-(Alexandre) 
+(Alexandre) 3 min
 (nb faits 50/100 M pour 2 jours, nb message de risk /jour (todo), nb msg flux 3-5k/msg, taille message (todo), nb de deal = 50k, nb d instrument 10k, nb de soucription , nb users 100 paris, 20 NY / 20 HK, machine 24 core avec 256Go de ram utilisé de l'ordre de 50% en Cpu et mémoire mis -Xmx64g)
 
 ## ActivePivot: Aggregation et requete temps reel
-(Benoit)
+(Benoit) 10 min
 - Composant Technologique In Memory: enabled by new Hardware and new technos (Java GCs)
 - Analogie F1: Si la technologie est tres puissante, elle reste difficile a mettre en oeuvre. OLAP apporte son lot de difficulte car tres naturel pour sujet simple, mais complexe pour les sujet avancee. La maturite acquises le long des projets ammene a trouver des solutions simples meme pour les sujets avancees... mais il est difficile de trouver ces solutions simples.
 - Threading, long pooling, immutabilité dans activepivot / threading (1 requete , n thread)
@@ -61,7 +61,7 @@ Plusieurs type de cube (Rates, XAsset, ... ), pas de pricing, que de l'estimatio
 - Explication du moteur temps reeel. pas de maintiens de vues temps reel. Calcul de l impact d une transaction au vues des questions posees.
  
 ## Performance : 
-(Benoit)
+(Benoit) 10 min
 SLA (del), optimisations (tout est en asynchrone). Usage d un framework specifique? Non. (Queue type Disruptor, ExecutorService,)
 - asynchronisement
 - pool d'objets pour les parties flux temps avec sérialization delta, attention a l'allocation d'objet
@@ -74,7 +74,7 @@ SLA (del), optimisations (tout est en asynchrone). Usage d un framework specifiq
 - Thread Dump en prod.
 
 ## Best practises / Design : 
-(Alexandre/Benoit)
+(Alexandre/Benoit) 10 min
 - Isolation (mode dégradé pour chacun des systemes sources), chargement de fichier, reload à chaud (JMX, fichier), Couplage faible message entre application avec serialization key/value (sans schema fort type corba), pas de livraison simultané.
 - Configuration du projet: javaConfig a eu un fort impact (si xml, dans votre lib application.xml, web.xml, avec des référence à des classes, ce n'est pas correct)
 - Monotoring REST jenkins health check, metrics
@@ -86,11 +86,14 @@ SLA (del), optimisations (tout est en asynchrone). Usage d un framework specifiq
 - Savoir dire non sur certains choix si vous pensez que cela peut avoir des conséquences négatifs (analogie MST).
 
 ## Future améliorations techniques dans les prochains mois
-(Alexandre)
+(Alexandre) 5 min
 - Tomcat 8 embedded, jdk 1.8, Migration ActivePivot 5.0
 - Deploiement automatique (deployit).
 - Meilleur monitoring avec logstash/elasticsearch/kibana
 - Refactoring package / livrable plus orienté feature pour avoir des cubes type genre Rates, XAsset, Credit, ForexOption ...
+- 
+## CCL 
+???
 
 
 Criticite de la production? Si les 2 serveurs sont down, il ne peuvent pas très traités mais pas seulement, il ne peuvent pas voir l'impact des évalotuions sur leurs positions actuelles. 
