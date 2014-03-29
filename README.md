@@ -72,12 +72,12 @@ SLA (del), optimisations (tout est en asynchrone). Usage d un framework specifiq
 
 ## Best practises / Design : 
 (Alexandre/Benoit)
-- Isolation (mode dégradé pour chacun des systemes sources), chargement de fichier, reload à chaud, Couplage faible message entre application avec serialization key/value (sans schema fort type corba).
-
+- Isolation (mode dégradé pour chacun des systemes sources), chargement de fichier, reload à chaud (JMX, fichier), Couplage faible message entre application avec serialization key/value (sans schema fort type corba), pas de livraison simultané.
 - Configuration du projet: javaConfig a eu un fort impact (si xml, dans votre lib application.xml, web.xml, avec des référence à des classes, ce n'est pas correct)
 - Monotoring REST jenkins health check, metrics
 - Beta en UAT avec flux de prod puis DR pour les bétas Users.
 - Package par feature pas technique, nombre de pom.xml, 1 par livrable ou lib avec cycle de vie différent.
+- Maven (javaformat, appassembler, assembly, release, )
 - Tester/Tester/Tester (65/70 % de coverage).
 
 ## Future améliorations techniques dans les prochains mois
