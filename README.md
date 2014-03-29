@@ -4,24 +4,30 @@ building-a-real-time-risk-analysis-system-in-java-devoxx-france-2014
  	
 Notre application de Trading d'Analyse de Risque temps réel doit maintenir une base de 100 millions de lignes (Xmx=64G) avec du flux de 5000 message/sec. Nos utilisateurs (répartis à Paris, Londres, NY et HK) suivent plus de 100 indicateurs tels que la sensibilité au marché et les estimations de gains : ils sont agrégés en temps réel avec des règles métiers complexes. Nous vous proposons un retour d’expérience afin d'expliquer nos choix technologiques : le design de l'application, la librairie ActivePivot pour agréger des indicateurs en temps réel et la diffusion des impacts en temps-réel.
 
-## Presentation du métier, et objectifs du projet (problematique de l international)
+## Presentation du métier, et objectifs du projet 
+Problematique de l international, Trading.
 (Alexandre)
  
-## Fonctionnalites business avancees: Grouping de deal, rebucketing, indicateur calculés temps reel PnL = sensi * (closing - last)
-(Alexnadre)
+## Fonctionnalites business avancees : 
+* Grouping de deal
+* Rebucketing
+* Indicateur calculés temps reel PnL = sensi * (closing - last)
+(Alexandre)
 
 ## Architecture global :
 (Alexandre)
 GREAT (Global Risk Exposure Analysis Tool) Server.
-2 servers avec les mêmes données, internatial, plusieurs type de cube, faulttolerance, pas de pricing
+2 servers (main, DR) avec les mêmes données à NY, Paris, HK
+Pas de , client qui décident suivant.
+Plusieurs type de cube, faulttolerance, pas de pricing.
 
 ## Stack technologique (Tibco?, Java + UI en C#, ActivePivot, JProfiler, MAT, Spring, guava, disruptor)
 (Alexandre)
 ### Server
-- Webapp dans Tomcat 7, jdk 7
+- Webapp dans un Tomcat 7, jdk 7
 - Classique (Spring/JavaConfig, CXF/WS avec Rest/Soap, JMS (tibco-ems), Guava)
 - Moins classique (Disruptor, java.util.concurrent, reuters, flux direct des bourses, serialisation custom protobuf ou autre)
-- Test : mockito, assertj, wiremock.
+- Test : junit, mockito, assertj, wiremock.
 - Outillage : JProfiler, MAT, maven / jenkins / sonar,
 
 ### Client
@@ -34,6 +40,7 @@ GREAT (Global Risk Exposure Analysis Tool) Server.
 ## ActivePivot: Aggregation et requete temps reel (Benoit)
 - Analogie F1
 (Benoit)
+
 
 ## Performance : 
 (benoit) 
